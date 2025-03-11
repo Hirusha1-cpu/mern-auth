@@ -41,7 +41,7 @@ export const register = async (req, res) => {
             text: `Welcome to Finesss! Your account has been created successfully with email: ${email}. `
         }
         await transporter.sendMail(mailOptions);
-        return res.status(201).json({ message: "User registered successfully", token });
+        return res.status(201).json({ success:true,message: "User registered successfully", token });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Something went wrong" });
@@ -75,7 +75,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        return res.status(200).json({ message: "User logged in successfully", token });
+        return res.status(200).json({ success:true ,message: "User logged in successfully", token });
     } catch (error) {
         console.error("Login Error:", error);
         return res.status(500).json({ message: `Something went wrong: ${error.message}` });
@@ -85,7 +85,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         res.clearCookie('token',{httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', maxAge: 7*24*60*60*1000});
-        return res.status(200).json({ message: "User logged out successfully" });
+        return res.status(200).json({success:true, message: "User logged out successfully" });
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
     }
