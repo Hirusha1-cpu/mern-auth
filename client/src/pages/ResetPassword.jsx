@@ -43,9 +43,11 @@ const ResetPassword = () => {
   const onSubmitEmail = async (e) => {
     try {
       e.preventDefault();
+      // console.log(e.value);
+      
       const otpArray = inputRefs.current.map(e => e.value)
       const otp = otpArray.join('')
-      const { data } = await axios.post(backendUrl + '/api/auth/sent-reset-otp', { otp })
+      const { data } = await axios.post(backendUrl + '/api/auth/sent-reset-otp', { email })
       if (data.success) {
         toast.success(data.message)
         setIsEmailSent(true)
@@ -85,7 +87,7 @@ const ResetPassword = () => {
             <img src={assets.mail_icon} alt="" className='w-3 h-3' />
             <input type="email" placeholder='Email Id' className='bg-transparent outline-none' value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
-          <button className='w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 text-white rounded-full'>Submit</button>
+          <button type='submit' className='w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 text-white rounded-full'>Submit</button>
         </form>
       }
       {/* otp input form  */}
@@ -95,7 +97,7 @@ const ResetPassword = () => {
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Email Verify OTP</h1>
           <p className='text-center mb-6 text-indigo-600'>Enter 6 digit code sent to mail</p>
           <div className='flex justify-between mb-8 ' onPaste={handlePaste}>
-            {Array(6).fill(0).map((_, index) => (
+            {Array(5).fill(0).map((_, index) => (
               <input type="text" maxLength='1' key={index} required
                 className='w-12 h-12 bg-purple text-black text-center text-xl rounded-md' ref={e => inputRefs.current[index] = e}
                 onInput={(e) => handleInput(e, index)}
