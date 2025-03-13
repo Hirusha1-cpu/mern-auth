@@ -46,6 +46,25 @@ app.use(cookieParser());
 app.get('/', (req, res) => res.send('Hello World! Finesss'));
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
+// More explicit CORS configuration
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  }
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
+
 
 app.get('/api/debug', (req, res) => {
   res.json({
@@ -59,3 +78,5 @@ app.get('/api/debug', (req, res) => {
 
 // Start server
 app.listen(port, () => console.log(`Server is running on port ${port}`));
+export default app;
+
