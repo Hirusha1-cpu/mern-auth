@@ -8,6 +8,7 @@ import userRouter from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
+const url = process.env.CLIENT_URL
 
 // Connect to MongoDB
 connectDB();
@@ -15,6 +16,7 @@ connectDB();
 // Define allowed origins
 const allowedOrigins = [
   'http://localhost:5173',
+  `${url}`,
   'https://mern-auth-drab-two.vercel.app',
   'https://mern-auth-client-81ifaaheb-hirushafernando121gmailcoms-projects.vercel.app'
 ];
