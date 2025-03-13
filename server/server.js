@@ -19,24 +19,22 @@ const allowedOrigins = [
   'https://mern-auth-client-81ifaaheb-hirushafernando121gmailcoms-projects.vercel.app'
 ];
 
-// Set up CORS middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  
-  next();
-});
+// Simplified CORS configuration that works better with Vercel
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // Middleware
 app.use(express.json());
@@ -46,6 +44,16 @@ app.use(cookieParser());
 app.get('/', (req, res) => res.send('Hello World! Finesss'));
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
+
+app.get('/api/debug', (req, res) => {
+  res.json({
+    message: 'Server is running',
+    env: process.env.NODE_ENV,
+    cors: {
+      allowedOrigins
+    }
+  });
+});
 
 // Start server
 app.listen(port, () => console.log(`Server is running on port ${port}`));
