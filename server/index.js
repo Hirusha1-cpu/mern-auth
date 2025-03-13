@@ -1,4 +1,3 @@
-// Import dependencies
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -7,35 +6,47 @@ import connectDB from './config/mongodb.js';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
-// Initialize express
 const app = express();
+const port = process.env.PORT || 4000;
 
 // Connect to MongoDB
 connectDB();
 
-// CORS setup
+// Define allowed origins
 const allowedOrigins = [
   'http://localhost:5173',
   'https://mern-auth-drab-two.vercel.app',
   'https://mern-auth-client-81ifaaheb-hirushafernando121gmailcoms-projects.vercel.app'
 ];
 
+// Simplified CORS configuration that works better with Vercel
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
-app.get('/', (req, res) => {
-  res.status(200).send('API is running');
-});
+// API endpoints
+app.get('/', (req, res) => res.send('Hello World! Finesss'));
+app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 app.get('/api/debug', (req, res) => {
-  res.status(200).json({
+  res.json({
     message: 'Server is running',
     env: process.env.NODE_ENV,
     cors: {
@@ -44,13 +55,5 @@ app.get('/api/debug', (req, res) => {
   });
 });
 
-app.use('/api/auth', authRouter);
-app.use('/api/user', userRouter);
-
-// Error handling
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
-
-// Export the Express API
-module.exports = app;
+// Start server
+app.listen(port, () => console.log(`Server is running on port ${port}`));

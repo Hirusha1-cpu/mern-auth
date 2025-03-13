@@ -51,7 +51,11 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
+        console.log("req",req.body);
+        
         const { email, password } = req.body;
+        console.log(email,password);
+        
         if (!email || !password) {
             return res.status(400).json({ message: "Please fill all the fields" });
         }
