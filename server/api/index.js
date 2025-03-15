@@ -17,6 +17,7 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:5173',
   `${url}`,
+  'https://mern-auth-server-brown.vercel.app'
   'https://mern-auth-drab-two.vercel.app',
   'https://mern-auth-client-81ifaaheb-hirushafernando121gmailcoms-projects.vercel.app'
 ];
